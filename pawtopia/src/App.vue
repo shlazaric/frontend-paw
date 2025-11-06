@@ -1,30 +1,35 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div>
+    <nav>
+      <router-link to="/">User</router-link> |
+      <router-link to="/admin">Admin</router-link>
+    </nav>
+
+    <router-view />
+  </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+<script>
+export default {
+  name: "App"
+};
+</script>
+
+<style scoped>
+nav {
   text-align: center;
-  color: #2c3e50;
+  margin-top: 20px;
+  font-size: 18px;
 }
 
-nav {
-  padding: 30px;
+a {
+  text-decoration: none;
+  color: #0095ff;
+  margin: 0 8px;
+}
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+a.router-link-active {
+  font-weight: bold;
+  color: #2c2c74;
 }
 </style>
