@@ -7,6 +7,8 @@ import LoginUser from '../views/user/LoginUser.vue'
 
 // ADMIN
 import WelcomeAdmin from '../views/admin/WelcomeAdmin.vue'
+import LoginAdmin from '../views/admin/LoginAdmin.vue'
+
 
 const routes = [
 
@@ -15,6 +17,7 @@ const routes = [
   { path: '/login', name: 'login-user', component: LoginUser },
 
   { path: '/admin', name: 'admin-welcome', component: WelcomeAdmin },
+  { path: '/admin-login', name: 'login-admin', component: LoginAdmin },
 ]
 
 const router = createRouter({
