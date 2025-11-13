@@ -42,7 +42,7 @@ export default {
         return;
       }
 
-      alert(`Dobrodošao/la ${this.ime} ${this.prezime}! 🎉`);
+      alert(`Dobrodošao/la ${this.ime} ${this.prezime}!`);
       this.$router.push("/login");
     }
   }
