@@ -1,6 +1,6 @@
 <template>
   <div class="admin-home">
-    <h1>Dobrodošao/la čuvaru/ice pasa </h1>
+    <h1>Dobrodošli!  &#128522; </h1>
 
     <div class="buttons">
       <router-link to="/admin-rezervacije">
