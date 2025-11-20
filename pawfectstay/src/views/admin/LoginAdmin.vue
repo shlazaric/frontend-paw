@@ -15,7 +15,6 @@
     <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
-
 <script>
 export default {
   name: "LoginAdmin",
@@ -35,7 +34,7 @@ export default {
 
       if (this.username === correctUsername && this.password === correctPassword) {
         alert("Dobrodošao natrag, administratoru!");
-        this.$router.push("/admin");
+        this.$router.push("/admin-home");   // ⭐ PREUSMJERAVANJE NA HOME ADMIN
       } else {
         this.error = "Pogrešno korisničko ime ili lozinka!";
       }
@@ -43,6 +42,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 .login-container {

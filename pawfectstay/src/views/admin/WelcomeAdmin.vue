@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <img src="@/assets/dog.jpg"/>
-    <h1>Pawtopia</h1>
+    <h1>PawfectStay</h1>
     <p>Dobrodošli, čuvari pasa!</p>
 
     <router-link to="/admin-login">Prijavi se</router-link>

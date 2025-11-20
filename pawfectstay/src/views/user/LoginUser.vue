@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <h1 class="title">Pawtopia</h1>
+    <h1 class="title">PawfectStay</h1>
     <p class="subtitle">Prijava korisnika</p>
 
     <form class="login-form" @submit.prevent="handleLogin">
@@ -50,16 +50,16 @@ export default {
         return;
       }
 
-     
       console.log("Korisnik se pokušava prijaviti:", this.email);
       alert(`Dobrodošao/la natrag, ${this.email}!`);
 
-    
+      
       this.$router.push("/home");
     },
   },
 };
 </script>
+
 
 <style scoped>
 .login-container {

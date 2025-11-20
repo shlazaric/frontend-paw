@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <img src="@/assets/dog.jpg" alt="Dog image" />
-    <h1>Pawtopia</h1>
+    <h1>PawfectStay</h1>
     <p>Dobrodošao/la u aplikaciju za vlasnike pasa!</p>
 
     <router-link to="/register">Registriraj se</router-link>
