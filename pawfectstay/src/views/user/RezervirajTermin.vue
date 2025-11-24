@@ -1,6 +1,6 @@
 <template>
   <div class="reservation-container">
-    <h1>Rezerviraj čuvanje psa</h1>
+    <h1>Rezerviraj čuvanje psa </h1>
 
     <form class="reservation-form" @submit.prevent="handleSubmit">
 
@@ -14,7 +14,7 @@
         required
       />
 
-   
+      
       <label for="duration">Trajanje čuvanja:</label>
       <select id="duration" v-model="duration" required>
         <option disabled value="">-- Odaberi trajanje --</option>
@@ -25,24 +25,14 @@
         <option>Noćenje</option>
       </select>
 
+   
       <label for="date">Datum dolaska:</label>
-      <input
-        type="date"
-        id="date"
-        v-model="date"
-        required
-      />
+      <input type="date" id="date" v-model="date" required />
 
-     
+
       <label for="time">Vrijeme dolaska:</label>
-      <input
-        type="time"
-        id="time"
-        v-model="time"
-        required
-      />
+      <input type="time" id="time" v-model="time" required />
 
-      
       <label for="note">Napomena (opcionalno):</label>
       <textarea
         id="note"
@@ -54,7 +44,6 @@
     </form>
 
     <p v-if="successMessage" class="success">{{ successMessage }}</p>
-
   </div>
 </template>
 
@@ -75,20 +64,36 @@ export default {
 
   methods: {
     handleSubmit() {
-
-      // provjera
+      // Provjera
       if (!this.petName || !this.duration || !this.date || !this.time) {
         alert("Molimo ispuni sva obavezna polja!");
         return;
       }
 
-      // uspjeh
+      // Kreiranje objekta rezervacije
+      const reservation = {
+        petName: this.petName,
+        duration: this.duration,
+        date: this.date,
+        time: this.time,
+        note: this.note,
+         status: "pending",
+  statusText: "Na čekanju"
+      };
+
+      //  Spremanje u localStorage
+      let saved = JSON.parse(localStorage.getItem("reservations")) || [];
+      saved.push(reservation);
+      localStorage.setItem("reservations", JSON.stringify(saved));
+
+      // Poruka o uspjehu
       this.successMessage = `Uspješno si rezervirao čuvanje za ${this.petName} (${this.duration}). Dolazak: ${this.date} u ${this.time} h.`;
 
-      
+
+      // Preusmjeravanje nakon 5 sekundi
       setTimeout(() => {
         this.$router.push("/home");
-      }, 6000);
+      }, 5000);
     },
   },
 };
