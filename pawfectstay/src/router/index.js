@@ -5,7 +5,7 @@ import WelcomeUser from '../views/user/WelcomeUser.vue'
 import RegisterUser from '../views/user/RegisterUser.vue'
 import LoginUser from '../views/user/LoginUser.vue'
 import HomeUser from '../views/user/HomeUser.vue'
-//import AddPet from '../views/user/AddPet.vue'
+import DodajPsa from '../views/user/DodajPsa.vue'
 import RezervirajTermin from '../views/user/RezervirajTermin.vue'
 
 // ADMIN
@@ -20,9 +20,8 @@ const routes = [
   { path: '/register', name: 'user-register', component: RegisterUser },
   { path: '/login', name: 'login-user', component: LoginUser },
   { path: '/home', name: 'user-home', component: HomeUser },
-  //{ path: '/dodaj-psa', name: 'add-dog', component: AddPet },
+  { path: '/dodaj-psa', name: 'add-dog', component: DodajPsa },
   { path: '/rezervacija', name: 'rezervacija', component: RezervirajTermin },
-
 
   // ADMIN routes
   { path: '/admin', name: 'admin-welcome', component: WelcomeAdmin },
