@@ -1,7 +1,6 @@
 <template>
   <div class="dog-container">
 
-
     <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
 
     <h1>Dodaj podatke o psu</h1>
@@ -68,9 +67,12 @@ export default {
         age: this.dogAge,
       };
 
-      localStorage.setItem("dogProfile", JSON.stringify(dogProfile));
+      // --- SPREMI U LISTU "dogs" ---
+      let dogs = JSON.parse(localStorage.getItem("dogs")) || [];
+      dogs.push(dogProfile);
+      localStorage.setItem("dogs", JSON.stringify(dogs));
 
-      this.successMessage = "Profil psa je uspješno spremljen! ";
+      this.successMessage = "Profil psa je uspješno spremljen!";
 
       setTimeout(() => {
         this.$router.push("/home");
@@ -88,7 +90,6 @@ export default {
   padding: 20px;
   font-family: "Poppins", sans-serif;
 }
-
 
 .back-btn {
   background: none;

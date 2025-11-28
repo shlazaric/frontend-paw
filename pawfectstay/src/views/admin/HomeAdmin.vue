@@ -7,7 +7,7 @@
         <button>Prikaz rezervacija</button>
       </router-link>
 
-      <router-link to="/admin-profili">
+      <router-link to="/admin-psi">
         <button>Prikaz profila pasa</button>
       </router-link>
     </div>
