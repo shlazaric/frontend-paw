@@ -1,6 +1,6 @@
 <template>
   <div class="home-container">
-    <h1>Dobrodošao/la u PawfectStay aplikaciju! </h1>
+    <h1>Dobrodošao/la u PawfectStay aplikaciju!</h1>
 
     <div class="buttons">
       <router-link to="/rezervacija">
@@ -9,6 +9,10 @@
 
       <router-link to="/dodaj-psa">
         <button>Dodaj psa</button>
+      </router-link>
+
+      <router-link to="/uredi-profil">
+        <button>Uredi profil psa</button>
       </router-link>
     </div>
   </div>
