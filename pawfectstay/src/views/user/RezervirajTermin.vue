@@ -1,10 +1,13 @@
 <template>
   <div class="reservation-container">
-    <h1>Rezerviraj čuvanje psa </h1>
+    
+    
+    <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
+
+    <h1>Rezerviraj čuvanje psa</h1>
 
     <form class="reservation-form" @submit.prevent="handleSubmit">
 
-     
       <label for="petName">Ime psa:</label>
       <input
         type="text"
@@ -14,7 +17,6 @@
         required
       />
 
-      
       <label for="duration">Trajanje čuvanja:</label>
       <select id="duration" v-model="duration" required>
         <option disabled value="">-- Odaberi trajanje --</option>
@@ -25,10 +27,8 @@
         <option>Noćenje</option>
       </select>
 
-   
       <label for="date">Datum dolaska:</label>
       <input type="date" id="date" v-model="date" required />
-
 
       <label for="time">Vrijeme dolaska:</label>
       <input type="time" id="time" v-model="time" required />
@@ -64,33 +64,27 @@ export default {
 
   methods: {
     handleSubmit() {
-      // Provjera
       if (!this.petName || !this.duration || !this.date || !this.time) {
         alert("Molimo ispuni sva obavezna polja!");
         return;
       }
 
-      // Kreiranje objekta rezervacije
       const reservation = {
         petName: this.petName,
         duration: this.duration,
         date: this.date,
         time: this.time,
         note: this.note,
-         status: "pending",
-  statusText: "Na čekanju"
+        status: "pending",
+        statusText: "Na čekanju"
       };
 
-      //  Spremanje u localStorage
       let saved = JSON.parse(localStorage.getItem("reservations")) || [];
       saved.push(reservation);
       localStorage.setItem("reservations", JSON.stringify(saved));
 
-      // Poruka o uspjehu
       this.successMessage = `Uspješno si rezervirao čuvanje za ${this.petName} (${this.duration}). Dolazak: ${this.date} u ${this.time} h.`;
 
-
-      // Preusmjeravanje nakon 5 sekundi
       setTimeout(() => {
         this.$router.push("/home");
       }, 5000);
@@ -111,6 +105,20 @@ h1 {
   text-align: center;
   color: #1d1b54;
   margin-bottom: 20px;
+}
+
+
+.back-btn {
+  background-color: transparent;
+  border: none;
+  color: #1d1b54;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
 }
 
 .reservation-form {
