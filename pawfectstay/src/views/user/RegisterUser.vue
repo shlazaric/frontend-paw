@@ -26,6 +26,7 @@
 <script>
 export default {
   name: "RegisterUser",
+
   data() {
     return {
       ime: "",
@@ -35,15 +36,42 @@ export default {
       ponoviLozinku: ""
     };
   },
+
   methods: {
-    handleSubmit() {
+    async handleSubmit() {
       if (this.lozinka !== this.ponoviLozinku) {
         alert("Lozinke se ne podudaraju!");
         return;
       }
 
-      alert(`Dobrodošao/la ${this.ime} ${this.prezime}!`);
-      this.$router.push("/login");
+      try {
+        const response = await fetch("http://localhost:3000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ime: this.ime,
+            prezime: this.prezime,
+            email: this.email,
+            lozinka: this.lozinka
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message || "Greška pri registraciji");
+          return;
+        }
+
+        alert("Registracija uspješna! Možeš se prijaviti.");
+        this.$router.push("/login");
+
+      } catch (error) {
+        console.error(error);
+        alert("Server nije dostupan");
+      }
     }
   }
 };
