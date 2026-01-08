@@ -9,7 +9,6 @@
         type="email"
         id="email"
         v-model="email"
-        placeholder="Upiši svoj e-mail"
         required
       />
 
@@ -18,7 +17,6 @@
         type="password"
         id="password"
         v-model="password"
-        placeholder="Upiši lozinku"
         required
       />
 
@@ -33,33 +31,39 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "LoginUser",
 
   data() {
     return {
       email: "",
-      password: "",
+      password: ""
     };
   },
 
   methods: {
-    handleLogin() {
-      if (!this.email || !this.password) {
-        alert("Molimo popuni sva polja!");
-        return;
+    async handleLogin() {
+      try {
+        const res = await axios.post("http://localhost:3000/login", {
+          email: this.email,
+          lozinka: this.password
+        });
+
+        alert(`Dobrodošao/la, ${res.data.user.email}!`);
+        this.$router.push("/home");
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.message);
+        } else {
+          alert("Server nije dostupan");
+        }
       }
-
-      console.log("Korisnik se pokušava prijaviti:", this.email);
-      alert(`Dobrodošao/la natrag, ${this.email}!`);
-
-      
-      this.$router.push("/home");
-    },
-  },
+    }
+  }
 };
 </script>
-
 
 <style scoped>
 .login-container {
@@ -69,65 +73,23 @@ export default {
   justify-content: center;
   min-height: 100vh;
   background-color: #fafaff;
-  font-family: "Poppins", sans-serif;
-}
-
-.title {
-  color: #1d1b54;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.subtitle {
-  color: #1d1b54;
-  font-size: 14px;
-  margin-bottom: 30px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  width: 80%;
-  max-width: 300px;
-}
-
-label {
-  color: #1d1b54;
-  font-weight: 600;
-  margin-bottom: 5px;
+  width: 300px;
 }
 
 input {
   margin-bottom: 15px;
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
 }
 
 button {
+  padding: 10px;
   background-color: #4a90e2;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #1d1b54;
-}
-
-.register-text {
-  margin-top: 20px;
-  font-size: 14px;
-}
-
-.register-text a {
-  color: #4a90e2;
-  font-weight: bold;
-  text-decoration: none;
 }
 </style>
