@@ -1,39 +1,18 @@
 <template>
   <div class="dog-container">
-
     <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
 
     <h1>Dodaj podatke o psu</h1>
 
     <form class="dog-form" @submit.prevent="saveDog">
-      
-      <label for="name">Ime psa:</label>
-      <input
-        id="name"
-        type="text"
-        v-model="dogName"
-        placeholder="Npr. Max"
-        required
-      />
+      <label>Ime psa:</label>
+      <input v-model="dogName" required />
 
-      <label for="breed">Vrsta psa:</label>
-      <input
-        id="breed"
-        type="text"
-        v-model="dogBreed"
-        placeholder="Npr. Labrador"
-        required
-      />
+      <label>Vrsta psa:</label>
+      <input v-model="dogBreed" required />
 
-      <label for="age">Starost psa:</label>
-      <input
-        id="age"
-        type="number"
-        v-model="dogAge"
-        placeholder="Npr. 3"
-        min="0"
-        required
-      />
+      <label>Starost psa:</label>
+      <input type="number" v-model="dogAge" min="0" required />
 
       <button type="submit">Spremi profil psa</button>
     </form>
@@ -41,7 +20,10 @@
     <p v-if="successMessage" class="success">{{ successMessage }}</p>
   </div>
 </template>
+
 <script>
+import axios from "axios";
+
 export default {
   name: "DodajPsa",
 
@@ -50,37 +32,36 @@ export default {
       dogName: "",
       dogBreed: "",
       dogAge: "",
-      successMessage: "",
+      successMessage: ""
     };
   },
 
   methods: {
-    saveDog() {
-      if (!this.dogName || !this.dogBreed || !this.dogAge) {
-        alert("Molimo popuni sva polja!");
-        return;
+    async saveDog() {
+      try {
+        await axios.post("http://localhost:3000/dogs", {
+          name: this.dogName,
+          breed: this.dogBreed,
+          age: this.dogAge
+        });
+
+        this.successMessage = "Profil psa je uspješno spremljen!";
+
+        setTimeout(() => {
+          this.$router.push("/home");
+        }, 3000);
+      } catch (error) {
+        if (error.response) {
+          alert(error.response.data.message);
+        } else {
+          alert("Server nije dostupan");
+        }
       }
-
-      const dogProfile = {
-        name: this.dogName,
-        breed: this.dogBreed,
-        age: this.dogAge,
-      };
-
-      // --- SPREMI U LISTU "dogs" ---
-      let dogs = JSON.parse(localStorage.getItem("dogs")) || [];
-      dogs.push(dogProfile);
-      localStorage.setItem("dogs", JSON.stringify(dogs));
-
-      this.successMessage = "Profil psa je uspješno spremljen!";
-
-      setTimeout(() => {
-        this.$router.push("/home");
-      }, 3000);
-    },
-  },
+    }
+  }
 };
 </script>
+
 
 
 <style scoped>
