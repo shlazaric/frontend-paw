@@ -1,63 +1,49 @@
-<template>
-    <div class="edit-container">
-
-        <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
-
-        <h1>Uredi profil psa</h1>
-
-        <div v-if="!dog">
-            <p>Nema spremljenih profila psa.</p>
-        </div>
-
-        <form v-else class="edit-form" @submit.prevent="updateDog">
-
-            <label for="name">Ime psa:</label>
-            <input id="name" type="text" v-model="dog.name" required />
-
-            <label for="breed">Vrsta psa:</label>
-            <input id="breed" type="text" v-model="dog.breed" required />
-
-            <label for="age">Starost psa:</label>
-            <input id="age" type="number" v-model="dog.age" min="0" required />
-
-            <button type="submit">Spremi promjene</button>
-        </form>
-
-        <p v-if="successMessage" class="success">{{ successMessage }}</p>
-
-    </div>
-</template>
-
 <script>
-    export default {
-        name: "UrediProfil",
+import axios from "axios";
 
-        data() {
-            return {
-                dog: null,
-                successMessage: "",
-            };
-        },
+export default {
+  name: "UrediProfil",
 
-        mounted() {
-            const savedDog = JSON.parse(localStorage.getItem("dogProfile"));
-            if (savedDog) {
-                this.dog = savedDog;
-            }
-        },
-
-        methods: {
-            updateDog() {
-                localStorage.setItem("dogProfile", JSON.stringify(this.dog));
-                this.successMessage = "Profil psa je uspješno ažuriran!";
-
-                setTimeout(() => {
-                    this.$router.push("/home");
-                }, 2500);
-            },
-        },
+  data() {
+    return {
+      dog: null,
+      successMessage: ""
     };
+  },
+
+  async mounted() {
+    const dogId = this.$route.params.id;
+
+    try {
+      const res = await axios.get(`http://localhost:3000/dogs/${dogId}`);
+      this.dog = res.data;
+    } catch {
+      alert("Pas nije pronađen");
+    }
+  },
+
+  methods: {
+    async updateDog() {
+      try {
+        await axios.put(`http://localhost:3000/dogs/${this.dog._id}`, {
+          name: this.dog.name,
+          breed: this.dog.breed,
+          age: this.dog.age
+        });
+
+        this.successMessage = "Profil psa je uspješno ažuriran!";
+
+        setTimeout(() => {
+          this.$router.push("/home");
+        }, 2500);
+      } catch {
+        alert("Greška pri spremanju promjena");
+      }
+    }
+  }
+};
 </script>
+
 
 <style scoped>
     .edit-container {
