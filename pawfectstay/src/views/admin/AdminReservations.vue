@@ -1,88 +1,83 @@
-<template>
+<template> 
+
   <div class="admin-container">
+    
+    <button class="back-btn" @click="$router.push('/admin-home')">
+      ← Natrag
+    </button>
+
     <h1>Pregled rezervacija</h1>
 
-    <div v-if="reservations.length === 0" class="no-data">
+    <p v-if="reservations.length === 0">
       Trenutno nema rezervacija.
-    </div>
+    </p>
 
-    <div v-else class="reservation-list">
+    <div v-else>
       <div
         class="reservation-card"
-        v-for="(r, index) in reservations"
-        :key="index"
+        v-for="r in reservations"
+        :key="r._id"
       >
         <h3>{{ r.petName }}</h3>
+        <p>Trajanje: {{ r.duration }}</p>
+        <p>Datum: {{ r.date }}</p>
+        <p>Vrijeme: {{ r.time }}</p>
+        <p v-if="r.note">Napomena: {{ r.note }}</p>
 
-        <p><strong>Trajanje:</strong> {{ r.duration }}</p>
-        <p><strong>Datum:</strong> {{ r.date }}</p>
-        <p><strong>Vrijeme:</strong> {{ r.time }} h</p>
+        <p>Status: <strong>{{ r.statusText }}</strong></p>
 
-        <p v-if="r.note"><strong>Napomena:</strong> {{ r.note }}</p>
-
-       
-        <p class="status" :class="r.status">
-          Status: <strong>{{ r.statusText }}</strong>
-        </p>
-
-       
-        <div class="buttons">
-          <button class="accept" @click="acceptReservation(index)">
-            Prihvati
-          </button>
-
-          <button class="decline" @click="declineReservation(index)">
-            Odbij
-          </button>
-
-          <button class="delete" @click="deleteReservation(index)">
-            Obriši
-          </button>
-        </div>
+        <button @click="acceptReservation(r._id)">Prihvati</button>
+        <button @click="declineReservation(r._id)">Odbij</button>
+        <button @click="deleteReservation(r._id)">Obriši</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: "AdminReservations",
+import axios from "axios";
 
+export default {
   data() {
     return {
-      reservations: [],
+      reservations: []
     };
   },
 
   mounted() {
-    const saved = JSON.parse(localStorage.getItem("reservations")) || [];
-    this.reservations = saved;
+    this.fetchReservations();
   },
 
   methods: {
-    save() {
-      localStorage.setItem("reservations", JSON.stringify(this.reservations));
+    async fetchReservations() {
+      const res = await axios.get("http://localhost:3000/admin/reservations");
+      this.reservations = res.data;
     },
 
-    acceptReservation(index) {
-      this.reservations[index].status = "accepted";
-      this.reservations[index].statusText = "Prihvaćeno";
-      this.save();
+    async acceptReservation(id) {
+      await axios.put(`http://localhost:3000/admin/reservations/${id}`, {
+        status: "accepted",
+        statusText: "Prihvaćeno"
+      });
+      this.fetchReservations();
     },
 
-    declineReservation(index) {
-      this.reservations[index].status = "declined";
-      this.reservations[index].statusText = "Odbijeno";
-      this.save();
+    async declineReservation(id) {
+      await axios.put(`http://localhost:3000/admin/reservations/${id}`, {
+        status: "declined",
+        statusText: "Odbijeno"
+      });
+      this.fetchReservations();
     },
 
-    deleteReservation(index) {
-      this.reservations.splice(index, 1);
-      this.save();
-    },
-  },
+    async deleteReservation(id) {
+      await axios.delete(`http://localhost:3000/admin/reservations/${id}`);
+      this.fetchReservations();
+    }
+  }
 };
 </script>
+
 
 <style scoped>
 .admin-container {

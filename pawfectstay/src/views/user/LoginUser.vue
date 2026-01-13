@@ -4,7 +4,7 @@
     <p class="subtitle">Prijava korisnika</p>
 
     <form class="login-form" @submit.prevent="handleLogin">
-      <label for="email">Unesi e-mail:</label>
+      <label for="email">E-mail:</label>
       <input
         type="email"
         id="email"
@@ -12,7 +12,7 @@
         required
       />
 
-      <label for="password">Unesi lozinku:</label>
+      <label for="password">Lozinka:</label>
       <input
         type="password"
         id="password"
@@ -27,6 +27,8 @@
       Nemaš račun?
       <router-link to="/register">Registriraj se</router-link>
     </p>
+
+    <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 
@@ -39,25 +41,32 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      error: ""
     };
   },
 
   methods: {
     async handleLogin() {
+      this.error = "";
+
       try {
         const res = await axios.post("http://localhost:3000/login", {
           email: this.email,
           lozinka: this.password
         });
 
-        alert(`Dobrodošao/la, ${res.data.user.email}!`);
+        // 🔐 SPREMI KORISNIKA
+        localStorage.setItem("userId", res.data.user.id);
+        localStorage.setItem("userEmail", res.data.user.email);
+
+        alert(`Dobrodošao/la ${res.data.user.email}`);
         this.$router.push("/home");
-      } catch (error) {
-        if (error.response) {
-          alert(error.response.data.message);
+      } catch (err) {
+        if (err.response) {
+          this.error = err.response.data.message;
         } else {
-          alert("Server nije dostupan");
+          this.error = "Server nije dostupan";
         }
       }
     }
@@ -67,29 +76,46 @@ export default {
 
 <style scoped>
 .login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #fafaff;
+  max-width: 380px;
+  margin: auto;
+  padding-top: 60px;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  margin-bottom: 25px;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  width: 300px;
+}
+
+label {
+  text-align: left;
+  margin-top: 10px;
 }
 
 input {
-  margin-bottom: 15px;
   padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 button {
+  margin-top: 20px;
   padding: 10px;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-top: 15px;
 }
 </style>

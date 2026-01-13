@@ -10,31 +10,94 @@
       <router-link to="/dodaj-psa">
         <button>Dodaj psa</button>
       </router-link>
+    </div>
 
-      <router-link to="/uredi-profil">
-        <button>Uredi profil psa</button>
-      </router-link>
+    <h2>Moji psi</h2>
+
+    <p v-if="dogs.length === 0">Nema dodanih pasa.</p>
+
+    <div v-else class="dog-list">
+      <div class="dog-card" v-for="dog in dogs" :key="dog._id">
+        <p><strong>Ime:</strong> {{ dog.name }}</p>
+        <p><strong>Vrsta:</strong> {{ dog.breed }}</p>
+        <p><strong>Starost:</strong> {{ dog.age }}</p>
+
+        <router-link :to="`/uredi-profil/${dog._id}`">
+          <button class="edit">Uredi profil psa</button>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  name: "HomeUser"
-}
+  name: "HomeUser",
+
+  data() {
+    return {
+      dogs: []
+    };
+  },
+
+  async mounted() {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("Niste prijavljeni");
+      this.$router.push("/login");
+      return;
+    }
+
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/dogs?userId=${user.id}`
+      );
+
+      this.dogs = res.data;
+    } catch {
+      alert("Greška pri dohvaćanju pasa");
+    }
+  }
+};
 </script>
+
 
 <style scoped>
 .home-container {
   text-align: center;
-  padding-top: 40px;
+  padding: 40px;
+}
+
+.buttons {
+  margin-bottom: 30px;
 }
 
 button {
-  margin: 12px;
+  margin: 10px;
   padding: 12px 18px;
-  font-size: 18px;
+  font-size: 16px;
   border-radius: 10px;
   cursor: pointer;
+}
+
+.dog-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.dog-card {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 12px;
+  width: 250px;
+}
+
+.edit {
+  margin-top: 10px;
 }
 </style>

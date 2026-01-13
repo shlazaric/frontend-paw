@@ -12,7 +12,7 @@
       <input v-model="dogBreed" required />
 
       <label>Starost psa:</label>
-      <input type="number" v-model="dogAge" min="0" required />
+      <input type="number" v-model.number="dogAge" min="0" required />
 
       <button type="submit">Spremi profil psa</button>
     </form>
@@ -31,37 +31,41 @@ export default {
     return {
       dogName: "",
       dogBreed: "",
-      dogAge: "",
+      dogAge: null,
       successMessage: ""
     };
   },
 
   methods: {
     async saveDog() {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        alert("Niste prijavljeni");
+        this.$router.push("/login");
+        return;
+      }
+
       try {
         await axios.post("http://localhost:3000/dogs", {
           name: this.dogName,
           breed: this.dogBreed,
-          age: this.dogAge
+          age: this.dogAge,
+          userId: user.id
         });
 
-        this.successMessage = "Profil psa je uspješno spremljen!";
+        this.successMessage = "Pas je uspješno dodan!";
 
         setTimeout(() => {
           this.$router.push("/home");
-        }, 3000);
+        }, 1500);
       } catch (error) {
-        if (error.response) {
-          alert(error.response.data.message);
-        } else {
-          alert("Server nije dostupan");
-        }
+        alert("Greška pri spremanju psa");
       }
     }
   }
 };
 </script>
-
 
 
 <style scoped>

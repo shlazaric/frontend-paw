@@ -1,36 +1,87 @@
 <template>
   <div class="reservation-container">
-    <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
+    <button @click="$router.push('/home')">← Natrag</button>
 
     <h1>Rezerviraj čuvanje psa</h1>
 
-    <form class="reservation-form" @submit.prevent="handleSubmit">
-      <label>Ime psa:</label>
-      <input v-model="petName" required />
+    <form @submit.prevent="handleSubmit" class="reservation-form">
+      <div class="form-group">
+        <label>Ime psa:</label>
+        <input v-model="petName" required />
+      </div>
 
-      <label>Trajanje:</label>
-      <select v-model="duration" required>
-        <option disabled value="">-- Odaberi --</option>
-        <option>1 sat</option>
-        <option>3 sata</option>
-        <option>5 sati</option>
-        <option>Cijeli dan</option>
-        <option>Noćenje</option>
-      </select>
+      <div class="form-group">
+        <label>Trajanje:</label>
+        <select v-model="duration" required>
+          <option disabled value="">-- Odaberi --</option>
+          <option>1 sat</option>
+          <option>3 sata</option>
+          <option>5 sati</option>
+          <option>Cijeli dan</option>
+          <option>Noćenje</option>
+        </select>
+      </div>
 
-      <label>Datum:</label>
-      <input type="date" v-model="date" required />
+      <div class="form-group">
+        <label>Datum:</label>
+        <input type="date" v-model="date" required />
+      </div>
 
-      <label>Vrijeme:</label>
-      <input type="time" v-model="time" required />
+      <div class="form-group">
+        <label>Vrijeme:</label>
+        <input type="time" v-model="time" required />
+      </div>
 
-      <label>Napomena:</label>
-      <textarea v-model="note"></textarea>
+      <div class="form-group">
+        <label>Napomena:</label>
+        <textarea v-model="note"></textarea>
+      </div>
 
       <button type="submit">Potvrdi</button>
     </form>
 
-    <p v-if="successMessage" class="success">{{ successMessage }}</p>
+    <p v-if="successMessage">{{ successMessage }}</p>
+
+    <!-- GUMB ZA STATUS -->
+    <hr />
+
+    <button @click="fetchReservations">
+      Prikaži status rezervacije
+    </button>
+
+    <!-- STATUS REZERVACIJA -->
+    <div v-if="reservations.length" class="status-box">
+      <h2>Moje rezervacije</h2>
+
+      <div
+        v-for="r in reservations"
+        :key="r._id"
+        class="reservation-status"
+      >
+        <p><strong>Pas:</strong> {{ r.petName }}</p>
+        <p><strong>Datum:</strong> {{ r.date }} u {{ r.time }}</p>
+        <p><strong>Trajanje:</strong> {{ r.duration }}</p>
+
+        <p>
+          <strong>Status:</strong>
+          <span
+            :class="{
+              pending: r.status === 'pending',
+              approved: r.status === 'approved',
+              rejected: r.status === 'rejected'
+            }"
+          >
+            {{ r.statusText }}
+          </span>
+        </p>
+
+        <hr />
+      </div>
+    </div>
+
+    <p v-if="showStatus && reservations.length === 0">
+      Trenutno nema rezervacija.
+    </p>
   </div>
 </template>
 
@@ -38,8 +89,6 @@
 import axios from "axios";
 
 export default {
-  name: "RezervirajCuvanje",
-
   data() {
     return {
       petName: "",
@@ -47,33 +96,44 @@ export default {
       date: "",
       time: "",
       note: "",
-      successMessage: ""
+      successMessage: "",
+      reservations: [],
+      showStatus: false
     };
   },
 
   methods: {
     async handleSubmit() {
-      try {
-        await axios.post("http://localhost:3000/reservations", {
-          petName: this.petName,
-          duration: this.duration,
-          date: this.date,
-          time: this.time,
-          note: this.note
-        });
+      const user = JSON.parse(localStorage.getItem("user"));
 
-        this.successMessage = "Rezervacija uspješno spremljena";
+      await axios.post("http://localhost:3000/reservations", {
+        petName: this.petName,
+        duration: this.duration,
+        date: this.date,
+        time: this.time,
+        note: this.note,
+        userId: user.id
+      });
 
-        setTimeout(() => {
-          this.$router.push("/home");
-        }, 3000);
-      } catch (error) {
-        if (error.response) {
-          alert(error.response.data.message);
-        } else {
-          alert("Server nije dostupan");
-        }
-      }
+      this.successMessage = "Rezervacija spremljena (Na čekanju)";
+
+      // reset forme
+      this.petName = "";
+      this.duration = "";
+      this.date = "";
+      this.time = "";
+      this.note = "";
+    },
+
+    async fetchReservations() {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      const res = await axios.get(
+        `http://localhost:3000/reservations/user/${user.id}`
+      );
+
+      this.reservations = res.data;
+      this.showStatus = true;
     }
   }
 };
