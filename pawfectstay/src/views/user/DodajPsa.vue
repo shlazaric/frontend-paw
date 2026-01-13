@@ -5,14 +5,37 @@
     <h1>Dodaj podatke o psu</h1>
 
     <form class="dog-form" @submit.prevent="saveDog">
-      <label>Ime psa:</label>
-      <input v-model="dogName" required />
 
-      <label>Vrsta psa:</label>
-      <input v-model="dogBreed" required />
+      <div class="form-group">
+        <label>Ime psa:</label>
+        <input v-model="dogName" required />
+      </div>
 
-      <label>Starost psa:</label>
-      <input type="number" v-model.number="dogAge" min="0" required />
+      <div class="form-group">
+        <label>Vrsta psa:</label>
+        <input v-model="dogBreed" required />
+      </div>
+
+      <div class="form-group">
+        <label>Starost psa:</label>
+        <div class="age-inputs">
+          <input
+            type="number"
+            v-model.number="dogYears"
+            min="0"
+            placeholder="Godine"
+            required
+          />
+          <input
+            type="number"
+            v-model.number="dogMonths"
+            min="0"
+            max="11"
+            placeholder="Mjeseci"
+            required
+          />
+        </div>
+      </div>
 
       <button type="submit">Spremi profil psa</button>
     </form>
@@ -31,34 +54,32 @@ export default {
     return {
       dogName: "",
       dogBreed: "",
-      dogAge: null,
+      dogYears: 0,
+      dogMonths: 0,
       successMessage: ""
     };
   },
 
   methods: {
     async saveDog() {
-      const user = JSON.parse(localStorage.getItem("user"));
-
-      if (!user) {
-        alert("Niste prijavljeni");
-        this.$router.push("/login");
-        return;
-      }
-
       try {
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        const totalMonths = this.dogYears * 12 + this.dogMonths;
+
         await axios.post("http://localhost:3000/dogs", {
           name: this.dogName,
           breed: this.dogBreed,
-          age: this.dogAge,
+          age: totalMonths,
           userId: user.id
         });
 
-        this.successMessage = "Pas je uspješno dodan!";
+        this.successMessage = "Profil psa uspješno spremljen";
 
         setTimeout(() => {
           this.$router.push("/home");
-        }, 1500);
+        }, 2000);
+
       } catch (error) {
         alert("Greška pri spremanju psa");
       }
@@ -67,70 +88,38 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .dog-container {
-  max-width: 420px;
+  max-width: 400px;
   margin: auto;
-  padding: 20px;
-  font-family: "Poppins", sans-serif;
 }
 
 .back-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  color: #1d1b54;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-.back-btn:hover {
-  text-decoration: underline;
-}
-
-h1 {
-  text-align: center;
-  color: #1d1b54;
   margin-bottom: 20px;
 }
 
 .dog-form {
   display: flex;
   flex-direction: column;
+  gap: 15px;
 }
 
-label {
-  font-weight: 600;
-  margin-top: 10px;
-  color: #1d1b54;
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-top: 5px;
+.age-inputs {
+  display: flex;
+  gap: 10px;
 }
 
-button {
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 20px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #1d1b54;
+.age-inputs input {
+  width: 100%;
 }
 
 .success {
-  margin-top: 20px;
+  margin-top: 15px;
   color: green;
-  font-weight: bold;
-  text-align: center;
 }
 </style>

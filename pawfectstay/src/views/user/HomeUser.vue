@@ -14,16 +14,27 @@
 
     <h2>Moji psi</h2>
 
-    <p v-if="dogs.length === 0">Nema dodanih pasa.</p>
+    <p v-if="dogs.length === 0">
+      Nema dodanih pasa.
+    </p>
 
     <div v-else class="dog-list">
-      <div class="dog-card" v-for="dog in dogs" :key="dog._id">
+      <div
+        class="dog-card"
+        v-for="dog in dogs"
+        :key="dog._id"
+      >
         <p><strong>Ime:</strong> {{ dog.name }}</p>
         <p><strong>Vrsta:</strong> {{ dog.breed }}</p>
-        <p><strong>Starost:</strong> {{ dog.age }}</p>
+        <p>
+          <strong>Starost:</strong>
+          {{ formatAge(dog.age) }}
+        </p>
 
         <router-link :to="`/uredi-profil/${dog._id}`">
-          <button class="edit">Uredi profil psa</button>
+          <button class="edit">
+            Uredi profil psa
+          </button>
         </router-link>
       </div>
     </div>
@@ -60,10 +71,38 @@ export default {
     } catch {
       alert("Greška pri dohvaćanju pasa");
     }
+  },
+
+  methods: {
+    formatAge(totalMonths) {
+      const years = Math.floor(totalMonths / 12);
+      const months = totalMonths % 12;
+
+      const yearLabel = (y) => {
+        if (y === 1) return "godina";
+        if (y >= 2 && y <= 4) return "godine";
+        return "godina";
+      };
+
+      const monthLabel = (m) => {
+        if (m === 1) return "mjesec";
+        if (m >= 2 && m <= 4) return "mjeseca";
+        return "mjeseci";
+      };
+
+      if (years === 0) {
+        return `${months} ${monthLabel(months)}`;
+      }
+
+      if (months === 0) {
+        return `${years} ${yearLabel(years)}`;
+      }
+
+      return `${years} ${yearLabel(years)} i ${months} ${monthLabel(months)}`;
+    }
   }
 };
 </script>
-
 
 <style scoped>
 .home-container {
