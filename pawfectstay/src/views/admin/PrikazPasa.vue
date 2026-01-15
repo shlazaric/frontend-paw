@@ -1,19 +1,42 @@
 <template>
   <div class="admin-dogs">
 
-    <button class="back-btn" @click="$router.push('/admin-home')">← Natrag</button>
+    <button class="back-btn" @click="$router.push('/admin-home')">
+      ← Natrag
+    </button>
 
-    <h1>Prikaz profila pasa</h1>
+    <h1>Prikaz svih pasa</h1>
 
-    <div v-if="dogs.length === 0" class="empty">
+    <p v-if="dogs.length === 0">
       Trenutno nema dodanih pasa.
-    </div>
+    </p>
 
     <div v-else class="dog-list">
-      <div class="dog-card" v-for="(dog, index) in dogs" :key="index">
+      <div
+        class="dog-card"
+        v-for="dog in dogs"
+        :key="dog._id"
+      >
         <h3>{{ dog.name }}</h3>
+
         <p><strong>Vrsta:</strong> {{ dog.breed }}</p>
-        <p><strong>Starost:</strong> {{ dog.age }} godina</p>
+
+        <p>
+          <strong>Starost:</strong>
+          {{ formatAge(dog.age) }}
+        </p>
+
+        <hr />
+
+        <p>
+          <strong>Vlasnik:</strong>
+          {{ dog.owner.ime }} {{ dog.owner.prezime }}
+        </p>
+
+        <p>
+          <strong>Email:</strong>
+          {{ dog.owner.email }}
+        </p>
       </div>
     </div>
 
@@ -21,19 +44,40 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "PrikazPasa",
 
   data() {
     return {
-      dogs: [],
+      dogs: []
     };
   },
 
-  mounted() {
-    const storedDogs = JSON.parse(localStorage.getItem("dogs")) || [];
-    this.dogs = storedDogs;
+  async mounted() {
+    try {
+      const res = await axios.get(
+        "http://localhost:3000/dogs/all"
+      );
+
+      this.dogs = res.data;
+    } catch {
+      alert("Greška pri dohvaćanju pasa");
+    }
   },
+
+  methods: {
+    formatAge(totalMonths) {
+      const years = Math.floor(totalMonths / 12);
+      const months = totalMonths % 12;
+
+      if (years === 0) return `${months} mjeseci`;
+      if (months === 0) return `${years} godina`;
+
+      return `${years} g ${months} mj`;
+    }
+  }
 };
 </script>
 

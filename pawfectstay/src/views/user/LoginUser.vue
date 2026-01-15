@@ -48,21 +48,21 @@ export default {
 
   methods: {
     async handleLogin() {
+      this.error = "";
+
       try {
         const res = await axios.post("http://localhost:3000/login", {
           email: this.email,
           lozinka: this.password
         });
 
-        
-        localStorage.setItem(
-          "user",
-          JSON.stringify(res.data.user)
-        );
+      
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
         this.$router.push("/home");
       } catch (err) {
-        this.error = err.response?.data?.message || "Greška";
+        this.error =
+          err.response?.data?.message || "Server nije dostupan";
       }
     }
   }
