@@ -48,31 +48,27 @@ export default {
 
   methods: {
     async handleLogin() {
-      this.error = "";
-
       try {
         const res = await axios.post("http://localhost:3000/login", {
           email: this.email,
           lozinka: this.password
         });
 
-        // 🔐 SPREMI KORISNIKA
-        localStorage.setItem("userId", res.data.user.id);
-        localStorage.setItem("userEmail", res.data.user.email);
+        
+        localStorage.setItem(
+          "user",
+          JSON.stringify(res.data.user)
+        );
 
-        alert(`Dobrodošao/la ${res.data.user.email}`);
         this.$router.push("/home");
       } catch (err) {
-        if (err.response) {
-          this.error = err.response.data.message;
-        } else {
-          this.error = "Server nije dostupan";
-        }
+        this.error = err.response?.data?.message || "Greška";
       }
     }
   }
 };
 </script>
+
 
 <style scoped>
 .login-container {

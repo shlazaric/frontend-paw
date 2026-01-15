@@ -1,5 +1,10 @@
 <template>
   <div class="home-container">
+
+    <button class="logout-btn" @click="logout">
+      Odjava
+    </button>
+    
     <h1>Dobrodošao/la u PawfectStay aplikaciju!</h1>
 
     <div class="buttons">
@@ -66,7 +71,6 @@ export default {
       const res = await axios.get(
         `http://localhost:3000/dogs?userId=${user.id}`
       );
-
       this.dogs = res.data;
     } catch {
       alert("Greška pri dohvaćanju pasa");
@@ -99,6 +103,11 @@ export default {
       }
 
       return `${years} ${yearLabel(years)} i ${months} ${monthLabel(months)}`;
+    },
+
+    logout() {
+      localStorage.removeItem("user");
+      this.$router.push("/login");
     }
   }
 };
@@ -139,4 +148,23 @@ button {
 .edit {
   margin-top: 10px;
 }
+
+.logout-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  color: #1d1b54;
+  border: 1px solid #1d1b54;
+  padding: 4px 10px;
+  font-size: 13px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #1d1b54;
+  color: white;
+}
+
 </style>
