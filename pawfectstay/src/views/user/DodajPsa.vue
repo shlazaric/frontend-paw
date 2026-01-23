@@ -60,31 +60,37 @@ export default {
     };
   },
 
-  methods: {
-    async saveDog() {
-      try {
-        const user = JSON.parse(localStorage.getItem("user"));
+methods: {
+  async saveDog() {
+    try {
+      const token = localStorage.getItem("token");
 
-        const totalMonths = this.dogYears * 12 + this.dogMonths;
+      const totalMonths = this.dogYears * 12 + this.dogMonths;
 
-        await axios.post("http://localhost:3000/dogs", {
+      await axios.post(
+        "http://localhost:3000/dogs",
+        {
           name: this.dogName,
           breed: this.dogBreed,
-          age: totalMonths,
-          userId: user.id
-        });
+          age: totalMonths
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
-        this.successMessage = "Profil psa uspješno spremljen";
+      this.successMessage = "Profil psa uspješno spremljen";
 
-        setTimeout(() => {
-          this.$router.push("/home");
-        }, 2000);
-
-      } catch (error) {
-        alert("Greška pri spremanju psa");
-      }
+      setTimeout(() => {
+        this.$router.push("/home");
+      }, 2000);
+    } catch (error) {
+      alert("Greška pri spremanju psa");
     }
   }
+}
 };
 </script>
 

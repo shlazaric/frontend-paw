@@ -4,6 +4,10 @@
 
     <h1>Moje rezervacije</h1>
 
+    <div v-if="reservations.length === 0">
+      <p>Nema rezervacija.</p>
+    </div>
+
     <div v-for="r in reservations" :key="r._id">
       <p><strong>{{ r.petName }}</strong></p>
       <p>{{ r.date }} | {{ r.time }}</p>
@@ -24,11 +28,28 @@ export default {
   },
 
   async mounted() {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const res = await axios.get(
-      `http://localhost:3000/reservations/user/${user.id}`
-    );
-    this.reservations = res.data;
+    try {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        this.$router.push("/login");
+        return;
+      }
+
+      const res = await axios.get(
+        "http://localhost:3000/reservations/user",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      this.reservations = res.data;
+    } catch (err) {
+      console.error(err);
+      alert("Greška pri dohvaćanju rezervacija");
+    }
   }
 };
 </script>

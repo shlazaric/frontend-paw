@@ -49,7 +49,7 @@
       Prikaži status rezervacije
     </button>
 
-    <!-- STATUS REZERVACIJA -->
+ 
     <div v-if="reservations.length" class="status-box">
       <h2>Moje rezervacije</h2>
 
@@ -84,7 +84,6 @@
     </p>
   </div>
 </template>
-
 <script>
 import axios from "axios";
 
@@ -104,36 +103,55 @@ export default {
 
   methods: {
     async handleSubmit() {
-      const user = JSON.parse(localStorage.getItem("user"));
+      try {
+        const token = localStorage.getItem("token");
 
-      await axios.post("http://localhost:3000/reservations", {
-        petName: this.petName,
-        duration: this.duration,
-        date: this.date,
-        time: this.time,
-        note: this.note,
-        userId: user.id
-      });
+        await axios.post(
+          "http://localhost:3000/reservations",
+          {
+            petName: this.petName,
+            duration: this.duration,
+            date: this.date,
+            time: this.time,
+            note: this.note
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
 
-      this.successMessage = "Rezervacija spremljena (Na čekanju)";
+        this.successMessage = "Rezervacija spremljena (Na čekanju)";
 
-      // reset forme
-      this.petName = "";
-      this.duration = "";
-      this.date = "";
-      this.time = "";
-      this.note = "";
+        this.petName = "";
+        this.duration = "";
+        this.date = "";
+        this.time = "";
+        this.note = "";
+      } catch (err) {
+        alert("Greška pri spremanju rezervacije");
+      }
     },
 
     async fetchReservations() {
-      const user = JSON.parse(localStorage.getItem("user"));
+      try {
+        const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        `http://localhost:3000/reservations/user/${user.id}`
-      );
+        const res = await axios.get(
+          "http://localhost:3000/reservations/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
 
-      this.reservations = res.data;
-      this.showStatus = true;
+        this.reservations = res.data;
+        this.showStatus = true;
+      } catch {
+        alert("Greška pri dohvaćanju rezervacija");
+      }
     }
   }
 };

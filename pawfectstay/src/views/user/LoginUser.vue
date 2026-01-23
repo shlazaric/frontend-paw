@@ -4,21 +4,11 @@
     <p class="subtitle">Prijava korisnika</p>
 
     <form class="login-form" @submit.prevent="handleLogin">
-      <label for="email">E-mail:</label>
-      <input
-        type="email"
-        id="email"
-        v-model="email"
-        required
-      />
+      <label>E-mail:</label>
+      <input type="email" v-model="email" required />
 
-      <label for="password">Lozinka:</label>
-      <input
-        type="password"
-        id="password"
-        v-model="password"
-        required
-      />
+      <label>Lozinka:</label>
+      <input type="password" v-model="password" required />
 
       <button type="submit">Prijavi se</button>
     </form>
@@ -57,18 +47,18 @@ export default {
         });
 
       
+        localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
 
         this.$router.push("/home");
       } catch (err) {
         this.error =
-          err.response?.data?.message || "Server nije dostupan";
+          err.response?.data?.message || "Greška pri prijavi";
       }
     }
   }
 };
 </script>
-
 
 <style scoped>
 .login-container {

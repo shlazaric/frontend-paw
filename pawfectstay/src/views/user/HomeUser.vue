@@ -4,7 +4,7 @@
     <button class="logout-btn" @click="logout">
       Odjava
     </button>
-    
+
     <h1>Dobrodošao/la u PawfectStay aplikaciju!</h1>
 
     <div class="buttons">
@@ -43,6 +43,7 @@
         </router-link>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -59,9 +60,9 @@ export default {
   },
 
   async mounted() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
 
-    if (!user) {
+    if (!token) {
       alert("Niste prijavljeni");
       this.$router.push("/login");
       return;
@@ -69,10 +70,17 @@ export default {
 
     try {
       const res = await axios.get(
-        `http://localhost:3000/dogs?userId=${user.id}`
+        "http://localhost:3000/dogs",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
+
       this.dogs = res.data;
-    } catch {
+    } catch (error) {
+      console.error(error);
       alert("Greška pri dohvaćanju pasa");
     }
   },
@@ -94,18 +102,14 @@ export default {
         return "mjeseci";
       };
 
-      if (years === 0) {
-        return `${months} ${monthLabel(months)}`;
-      }
-
-      if (months === 0) {
-        return `${years} ${yearLabel(years)}`;
-      }
+      if (years === 0) return `${months} ${monthLabel(months)}`;
+      if (months === 0) return `${years} ${yearLabel(years)}`;
 
       return `${years} ${yearLabel(years)} i ${months} ${monthLabel(months)}`;
     },
 
     logout() {
+      localStorage.removeItem("token");
       localStorage.removeItem("user");
       this.$router.push("/login");
     }
