@@ -1,24 +1,11 @@
-# pawtopia
+Naziv aplikacije i sastav vašeg tima: PawfectStay, Shana Antonia lazarić
 
-## Project setup
-```
-npm install
-```
+Fakultet informatike u Puli : https://fipu.unipu.hr/
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Kolegij: Web aplikacije : https://fiputreca.notion.site/Web-aplikacije-7ba8350d498546a78812399024edac44
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Mentor: doc. dr. sc. Nikola Tanković : https://fiputreca.notion.site/Kontakt-stranica-875574d1b92248b1a8e90dae52cd29a9
 
-### Lints and fixes files
-```
-npm run lint
-```
+Kratki opis funkcionalnosti: PawfectStay je aplikacija namijenjena vlasnicima pasa i administratorima čuvanja pasa. Omogućuje korisnicima registraciju pasa, rezervaciju termina čuvanja, praćenje statusa rezervacija i uređivanje profila pasa. Administratorima omogućuje pregled svih rezervacija i pasa te upravljanje statusima rezervacija. 
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Link na javni prototip: https://www.figma.com/proto/sULiVKhfxYog5GFr2mH3Wz/Untitled?node-id=5-53&starting-point-node-id=1%3A2
