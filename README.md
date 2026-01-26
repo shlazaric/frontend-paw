@@ -10,4 +10,4 @@ Kratki opis funkcionalnosti: PawfectStay je aplikacija namijenjena vlasnicima pa
 
 Link na javni prototip: https://www.figma.com/proto/sULiVKhfxYog5GFr2mH3Wz/Untitled?node-id=5-53&starting-point-node-id=1%3A2
 
-Link na backend aplikacije : https://backend-paw-1.onrender.com
+
