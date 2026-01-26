@@ -3,10 +3,10 @@
     <h2>Admin prijava</h2>
 
     <form @submit.prevent="handleLogin">
-      <label for="username">Unesi korisničko ime:</label>
+      <label for="username">Korisničko ime:</label>
       <input type="text" id="username" v-model="username" required />
 
-      <label for="password">Unesi lozinku:</label>
+      <label for="password">Lozinka:</label>
       <input type="password" id="password" v-model="password" required />
 
       <button type="submit">Prijavi se</button>
@@ -15,31 +15,38 @@
     <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
+
 <script>
+import axios from "axios";
+
 export default {
   name: "LoginAdmin",
-
   data() {
     return {
       username: "",
       password: "",
-      error: "",
+      error: ""
     };
   },
-
   methods: {
-    handleLogin() {
-      const correctUsername = "admin";
-      const correctPassword = "admin123";
+    async handleLogin() {
+      try {
+        const res = await axios.post("http://localhost:3000/admin/login", {
+          username: this.username,
+          password: this.password
+        });
 
-      if (this.username === correctUsername && this.password === correctPassword) {
-        alert("Dobrodošao natrag, administratoru!");
-        this.$router.push("/admin-home");   // ⭐ PREUSMJERAVANJE NA HOME ADMIN
-      } else {
-        this.error = "Pogrešno korisničko ime ili lozinka!";
+        
+        localStorage.setItem("adminToken", res.data.token);
+
+        alert("Dobrodošao, administratoru!");
+        this.$router.push("/admin-home"); 
+      } catch (err) {
+        console.error(err);
+        this.error = err.response?.data?.message || "Greška pri prijavi";
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

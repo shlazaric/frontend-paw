@@ -1,45 +1,25 @@
 <template>
   <div class="dog-container">
     <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
-
     <h1>Dodaj podatke o psu</h1>
-
     <form class="dog-form" @submit.prevent="saveDog">
-
       <div class="form-group">
         <label>Ime psa:</label>
         <input v-model="dogName" required />
       </div>
-
       <div class="form-group">
         <label>Vrsta psa:</label>
         <input v-model="dogBreed" required />
       </div>
-
       <div class="form-group">
         <label>Starost psa:</label>
         <div class="age-inputs">
-          <input
-            type="number"
-            v-model.number="dogYears"
-            min="0"
-            placeholder="Godine"
-            required
-          />
-          <input
-            type="number"
-            v-model.number="dogMonths"
-            min="0"
-            max="11"
-            placeholder="Mjeseci"
-            required
-          />
+          <input type="number" v-model.number="dogYears" min="0" placeholder="Godine" required />
+          <input type="number" v-model.number="dogMonths" min="0" max="11" placeholder="Mjeseci" required />
         </div>
       </div>
-
       <button type="submit">Spremi profil psa</button>
     </form>
-
     <p v-if="successMessage" class="success">{{ successMessage }}</p>
   </div>
 </template>
@@ -49,7 +29,6 @@ import axios from "axios";
 
 export default {
   name: "DodajPsa",
-
   data() {
     return {
       dogName: "",
@@ -59,38 +38,39 @@ export default {
       successMessage: ""
     };
   },
-
-methods: {
-  async saveDog() {
-    try {
-      const token = localStorage.getItem("token");
-
-      const totalMonths = this.dogYears * 12 + this.dogMonths;
-
-      await axios.post(
-        "http://localhost:3000/dogs",
-        {
-          name: this.dogName,
-          breed: this.dogBreed,
-          age: totalMonths
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+  methods: {
+    async saveDog() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Niste prijavljeni!");
+          return;
         }
-      );
 
-      this.successMessage = "Profil psa uspješno spremljen";
+        const totalMonths = this.dogYears * 12 + this.dogMonths;
 
-      setTimeout(() => {
-        this.$router.push("/home");
-      }, 2000);
-    } catch (error) {
-      alert("Greška pri spremanju psa");
+        await axios.post(
+          "http://localhost:3000/dogs",
+          { name: this.dogName, breed: this.dogBreed, age: totalMonths },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        this.successMessage = "Profil psa uspješno spremljen";
+
+        this.dogName = "";
+        this.dogBreed = "";
+        this.dogYears = 0;
+        this.dogMonths = 0;
+
+        setTimeout(() => {
+          this.$router.push("/home");
+        }, 2000);
+      } catch (error) {
+        console.error(error.response?.data || error);
+        alert(error.response?.data?.message || "Greška pri spremanju psa");
+      }
     }
   }
-}
 };
 </script>
 

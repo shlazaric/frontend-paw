@@ -1,7 +1,6 @@
 <template>
   <div class="register-container">
     <h2>Registracija korisnika</h2>
-
     <form @submit.prevent="handleSubmit">
       <label for="ime">Unesi ime:</label>
       <input type="text" id="ime" v-model="ime" required />
@@ -26,7 +25,6 @@
 <script>
 export default {
   name: "RegisterUser",
-
   data() {
     return {
       ime: "",
@@ -36,20 +34,16 @@ export default {
       ponoviLozinku: ""
     };
   },
-
   methods: {
     async handleSubmit() {
       if (this.lozinka !== this.ponoviLozinku) {
         alert("Lozinke se ne podudaraju!");
         return;
       }
-
       try {
         const response = await fetch("http://localhost:3000/register", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ime: this.ime,
             prezime: this.prezime,
@@ -57,17 +51,13 @@ export default {
             lozinka: this.lozinka
           })
         });
-
         const data = await response.json();
-
         if (!response.ok) {
           alert(data.message || "Greška pri registraciji");
           return;
         }
-
         alert("Registracija uspješna! Možeš se prijaviti.");
         this.$router.push("/login");
-
       } catch (error) {
         console.error(error);
         alert("Server nije dostupan");
@@ -79,51 +69,58 @@ export default {
 
 <style scoped>
 .register-container {
-  max-width: 400px;
-  margin: 50px auto;
+  max-width: 320px;
+  margin: 20px auto;
   background-color: #fafaff;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
-
 h2 {
   text-align: center;
   color: #2c2c74;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
+  font-size: 20px;
 }
-
 form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 }
-
 label {
   color: #2c2c74;
   text-align: left;
   font-weight: 500;
+  font-size: 14px;
 }
-
 input {
-  padding: 10px;
-  border-radius: 8px;
+  padding: 8px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 16px;
+  font-size: 14px;
 }
-
 button {
   background-color: #0095ff;
   color: white;
   font-weight: bold;
   border: none;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 6px;
+  padding: 8px;
   margin-top: 10px;
   cursor: pointer;
+  font-size: 14px;
 }
-
 button:hover {
   background-color: #007bd6;
+}
+@media (max-width: 400px) {
+  .register-container {
+    width: 90%;
+    padding: 15px;
+  }
+  input, button {
+    font-size: 13px;
+    padding: 6px;
+  }
 }
 </style>

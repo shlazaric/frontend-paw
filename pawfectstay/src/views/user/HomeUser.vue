@@ -1,10 +1,6 @@
 <template>
   <div class="home-container">
-
-    <button class="logout-btn" @click="logout">
-      Odjava
-    </button>
-
+    <button class="logout-btn" @click="logout">Odjava</button>
     <h1>Dobrodošao/la u PawfectStay aplikaciju!</h1>
 
     <div class="buttons">
@@ -19,31 +15,19 @@
 
     <h2>Moji psi</h2>
 
-    <p v-if="dogs.length === 0">
-      Nema dodanih pasa.
-    </p>
+    <p v-if="dogs.length === 0">Nema dodanih pasa.</p>
 
     <div v-else class="dog-list">
-      <div
-        class="dog-card"
-        v-for="dog in dogs"
-        :key="dog._id"
-      >
+      <div class="dog-card" v-for="dog in dogs" :key="dog._id">
         <p><strong>Ime:</strong> {{ dog.name }}</p>
         <p><strong>Vrsta:</strong> {{ dog.breed }}</p>
-        <p>
-          <strong>Starost:</strong>
-          {{ formatAge(dog.age) }}
-        </p>
+        <p><strong>Starost:</strong> {{ formatAge(dog.age) }}</p>
 
         <router-link :to="`/uredi-profil/${dog._id}`">
-          <button class="edit">
-            Uredi profil psa
-          </button>
+          <button class="edit">Uredi profil psa</button>
         </router-link>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -52,13 +36,11 @@ import axios from "axios";
 
 export default {
   name: "HomeUser",
-
   data() {
     return {
       dogs: []
     };
   },
-
   async mounted() {
     const token = localStorage.getItem("token");
 
@@ -69,45 +51,27 @@ export default {
     }
 
     try {
-      const res = await axios.get(
-        "http://localhost:3000/dogs",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
+      const res = await axios.get("http://localhost:3000/dogs", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       this.dogs = res.data;
     } catch (error) {
-      console.error(error);
-      alert("Greška pri dohvaćanju pasa");
+      console.error(error.response?.data || error);
+      alert(error.response?.data?.message || "Greška pri dohvaćanju pasa");
     }
   },
-
   methods: {
     formatAge(totalMonths) {
       const years = Math.floor(totalMonths / 12);
       const months = totalMonths % 12;
 
-      const yearLabel = (y) => {
-        if (y === 1) return "godina";
-        if (y >= 2 && y <= 4) return "godine";
-        return "godina";
-      };
-
-      const monthLabel = (m) => {
-        if (m === 1) return "mjesec";
-        if (m >= 2 && m <= 4) return "mjeseca";
-        return "mjeseci";
-      };
+      const yearLabel = (y) => (y === 1 ? "godina" : y >= 2 && y <= 4 ? "godine" : "godina");
+      const monthLabel = (m) => (m === 1 ? "mjesec" : m >= 2 && m <= 4 ? "mjeseca" : "mjeseci");
 
       if (years === 0) return `${months} ${monthLabel(months)}`;
       if (months === 0) return `${years} ${yearLabel(years)}`;
-
       return `${years} ${yearLabel(years)} i ${months} ${monthLabel(months)}`;
     },
-
     logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("user");

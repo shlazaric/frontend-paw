@@ -1,6 +1,6 @@
 <template>
   <div class="admin-home">
-    <h1>Dobrodošli!  &#128522; </h1>
+    <h1>Dobrodošli!</h1>
 
     <div class="buttons">
       <router-link to="/admin-rezervacije">
@@ -10,6 +10,8 @@
       <router-link to="/admin-psi">
         <button>Prikaz profila pasa</button>
       </router-link>
+
+      <button class="logout-btn" @click="logout">Odjava</button>
     </div>
   </div>
 </template>
@@ -17,6 +19,14 @@
 <script>
 export default {
   name: "HomeAdmin",
+
+  methods: {
+    logout() {
+      localStorage.removeItem("adminToken");
+
+      this.$router.push("/admin-login");
+    }
+  }
 };
 </script>
 

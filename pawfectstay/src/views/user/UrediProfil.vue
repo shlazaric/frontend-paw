@@ -1,73 +1,37 @@
 <template>
   <div class="edit-container">
-
-    <button class="back-btn" @click="$router.push('/home')">
-      ← Natrag
-    </button>
-
+    <button class="back-btn" @click="$router.push('/home')">← Natrag</button>
     <h1>Uredi profil psa</h1>
 
-    <div v-if="!dog">
-      Učitavanje...
-    </div>
+    <div v-if="!dog">Učitavanje...</div>
 
     <form v-else @submit.prevent="updateDog">
-
       <div class="form-group">
         <label>Ime psa:</label>
-        <input
-          type="text"
-          v-model="dog.name"
-          required
-        />
+        <input type="text" v-model="dog.name" required />
       </div>
 
       <div class="form-group">
         <label>Vrsta psa:</label>
-        <input
-          type="text"
-          v-model="dog.breed"
-          required
-        />
+        <input type="text" v-model="dog.breed" required />
       </div>
 
       <div class="form-group">
         <label>Starost psa:</label>
-
         <div class="age-inputs">
-          <input
-            type="number"
-            v-model.number="years"
-            min="0"
-            placeholder="Godine"
-            required
-          />
-
-          <input
-            type="number"
-            v-model.number="months"
-            min="0"
-            max="11"
-            placeholder="Mjeseci"
-            required
-          />
+          <input type="number" v-model.number="years" min="0" placeholder="Godine" required />
+          <input type="number" v-model.number="months" min="0" max="11" placeholder="Mjeseci" required />
         </div>
-
-        <small class="age-text">
-          {{ ageText }}
-        </small>
+        <small class="age-text">{{ ageText }}</small>
       </div>
 
-      <button type="submit">
-        Spremi
-      </button>
-
+      <div class="btn-group">
+        <button type="submit">Spremi</button>
+        <button type="button" class="delete-btn" @click="deleteDog">Obriši psa</button>
+      </div>
     </form>
 
-    <p v-if="successMessage" class="success">
-      {{ successMessage }}
-    </p>
-
+    <p v-if="successMessage" class="success">{{ successMessage }}</p>
   </div>
 </template>
 
@@ -76,7 +40,6 @@ import axios from "axios";
 
 export default {
   name: "UrediProfil",
-
   data() {
     return {
       dog: null,
@@ -85,75 +48,67 @@ export default {
       successMessage: ""
     };
   },
-
   async mounted() {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
     const dogId = this.$route.params.id;
-
-    if (!user || !dogId) {
-      this.$router.push("/home");
+    if (!token || !dogId) {
+      this.$router.push("/login");
       return;
     }
 
     try {
-      const res = await axios.get(
-        `http://localhost:3000/dogs/${dogId}?userId=${user.id}`
-      );
-
+      const res = await axios.get(`http://localhost:3000/dogs/${dogId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       this.dog = res.data;
-
-      
       this.years = Math.floor(this.dog.age / 12);
       this.months = this.dog.age % 12;
-
-    } catch {
-      alert("Pas nije pronađen");
+    } catch (error) {
+      console.error(error);
+      alert(error.response?.data?.message || "Pas nije pronađen");
       this.$router.push("/home");
     }
   },
-
   computed: {
     ageText() {
-      if (this.years === 0 && this.months === 0) {
-        return "0 mjeseci";
-      }
-
-      if (this.years === 0) {
-        return `${this.months} ${this.months === 1 ? "mjesec" : "mjeseci"}`;
-      }
-
-      if (this.months === 0) {
-        return `${this.years} ${this.years === 1 ? "godina" : "godine"}`;
-      }
-
-      return `${this.years} ${
-        this.years === 1 ? "godina" : "godine"
-      } i ${this.months} ${
-        this.months === 1 ? "mjesec" : "mjeseci"
-      }`;
+      if (!this.years && !this.months) return "0 mjeseci";
+      if (!this.years) return `${this.months} mjeseci`;
+      if (!this.months) return `${this.years} godina`;
+      return `${this.years} godina i ${this.months} mjeseci`;
     }
   },
-
   methods: {
     async updateDog() {
-      const user = JSON.parse(localStorage.getItem("user"));
-
+      const token = localStorage.getItem("token");
       const totalMonths = this.years * 12 + this.months;
-
+      if (!this.dog.name || !this.dog.breed) {
+        alert("Unesite ime i vrstu psa!");
+        return;
+      }
       try {
-        await axios.put(
-          `http://localhost:3000/dogs/${this.dog._id}`,
-          {
-            userId: user.id,
-            name: this.dog.name,
-            breed: this.dog.breed,
-            age: totalMonths
-          }
-        );
-
+        await axios.put(`http://localhost:3000/dogs/${this.dog._id}`, {
+          name: this.dog.name,
+          breed: this.dog.breed,
+          age: totalMonths
+        }, { headers: { Authorization: `Bearer ${token}` } });
         this.successMessage = "Profil psa je uspješno ažuriran!";
-      } catch {
-        alert("Greška pri spremanju profila psa");
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.message || "Greška pri spremanju profila psa");
+      }
+    },
+    async deleteDog() {
+      if (!confirm("Jesi li siguran/na da želiš obrisati psa?")) return;
+      const token = localStorage.getItem("token");
+      try {
+        await axios.delete(`http://localhost:3000/dogs/${this.dog._id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert("Pas je obrisan");
+        this.$router.push("/home");
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.message || "Greška pri brisanju psa");
       }
     }
   }

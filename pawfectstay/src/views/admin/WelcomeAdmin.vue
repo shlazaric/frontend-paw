@@ -2,7 +2,7 @@
   <div class="container">
     <img src="@/assets/dog.jpg"/>
     <h1>PawfectStay</h1>
-    <p>Dobrodošli, čuvari pasa!</p>
+    <p>Dobrodošli!</p>
 
     <router-link to="/admin-login">Prijavi se</router-link>
   </div>
